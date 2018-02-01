@@ -1,8 +1,8 @@
-###简介
+## 简介
 Time-NLP的python3版本   
 python 版本https://github.com/sunfiyes/Time-NLPY  
 Java 版本https://github.com/shinyke/Time-NLP
-##功能说明
+## 功能说明
 用于句子中时间词的抽取和转换  
 详情请见test.py
 
@@ -27,5 +27,5 @@ Java 版本https://github.com/shinyke/Time-NLP
     {"error": "no time pattern could be extracted."}
     {"timestamp": "2016-01-01 00:00:00", "type": "timestamp"}
     
-##使用方式 
+## 使用方式 
 demo：python3 Test.py
