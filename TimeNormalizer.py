@@ -38,9 +38,9 @@ class TimeNormalizer:
                 pickle.dump(p, f)
             with open(fpath, 'rb') as f:
                 pattern = pickle.load(f)
-        with open(os.path.dirname(__file__) + '/resource/holi_solar.json', 'r') as f:
+        with open(os.path.dirname(__file__) + '/resource/holi_solar.json', 'r', encoding='utf-8') as f:
             holi_solar = json.load(f)
-        with open(os.path.dirname(__file__) + '/resource/holi_lunar.json', 'r') as f:
+        with open(os.path.dirname(__file__) + '/resource/holi_lunar.json', 'r', encoding='utf-8') as f:
             holi_lunar = json.load(f)
         return pattern, holi_solar, holi_lunar
 
