@@ -14,16 +14,46 @@ from StringPreHandler import StringPreHandler
 from TimePoint import TimePoint
 from TimeUnit import TimeUnit
 
-import sys
-#reload(sys)
-#sys.setdefaultencoding('utf8')
-
-
 # 时间表达式识别的主要工作类
 class TimeNormalizer:
     def __init__(self, isPreferFuture=True):
         self.isPreferFuture = isPreferFuture
         self.pattern, self.holi_solar, self.holi_lunar = self.init()
+
+    # 这里对一些不规范的表达做转换
+    def _filter(self, input_query):
+        # 这里对于下个周末这种做转化 把个给移除掉
+        input_query = StringPreHandler.numberTranslator(input_query)
+
+        rule = u"[0-9]月[0-9]"
+        pattern = re.compile(rule)
+        match = pattern.search(input_query)
+        if match != None:
+            index = input_query.find('月')
+            rule = u"日|号"
+            pattern = re.compile(rule)
+            match = pattern.search(input_query[index:])
+            if match == None:
+                rule = u"[0-9]月[0-9]+"
+                pattern = re.compile(rule)
+                match = pattern.search(input_query)
+                if match != None:
+                    end = match.span()[1]
+                    input_query = input_query[:end] + '号' + input_query[end:]
+
+        rule = u"月"
+        pattern = re.compile(rule)
+        match = pattern.search(input_query)
+        if match == None:
+            input_query = input_query.replace('个', '')
+
+        input_query = input_query.replace('中旬', '15号')
+        input_query = input_query.replace('傍晚', '午后')
+        input_query = input_query.replace('大年', '')
+        input_query = input_query.replace('五一', '劳动节')
+        input_query = input_query.replace('白天', '早上')
+        input_query = input_query.replace('：', ':')
+        return input_query
 
     def init(self):
         fpath = os.path.dirname(__file__) + '/resource/reg.pkl'
@@ -54,19 +84,36 @@ class TimeNormalizer:
         self.isTimeSpan = False
         self.invalidSpan = False
         self.timeSpan = ''
-        self.target = target
+        self.target = self._filter(target)
         self.timeBase = arrow.get(timeBase).format('YYYY-M-D-H-m-s')
+        self.nowTime = timeBase
         self.oldTimeBase = self.timeBase
         self.__preHandling()
         self.timeToken = self.__timeEx()
         dic = {}
         res = self.timeToken
+
         if self.isTimeSpan:
             if self.invalidSpan:
                 dic['error'] = 'no time pattern could be extracted.'
             else:
+                result = {}
                 dic['type'] = 'timedelta'
                 dic['timedelta'] = self.timeSpan
+                # print(dic['timedelta'])
+                index = dic['timedelta'].find('days')
+
+                days = int(dic['timedelta'][:index-1])
+                result['year'] = int(days / 365)
+                result['month'] = int(days / 30 - result['year'] * 12)
+                result['day'] = int(days - result['year'] * 365 - result['month'] * 30)
+                index = dic['timedelta'].find(',')
+                time = dic['timedelta'][index+1:]
+                time = time.split(':')
+                result['hour'] = int(time[0])
+                result['minute'] = int(time[1])
+                result['second'] = int(time[2])
+                dic['timedelta'] = result
         else:
             if len(res) == 0:
                 dic['error'] = 'no time pattern could be extracted.'
@@ -112,11 +159,15 @@ class TimeNormalizer:
         res = []
         # 时间上下文： 前一个识别出来的时间会是下一个时间的上下文，用于处理：周六3点到5点这样的多个时间的识别，第二个5点应识别到是周六的。
         contextTp = TimePoint()
-
+        print(self.timeBase)
+        print('temp',temp)
         for i in range(0, rpointer):
             # 这里是一个类嵌套了一个类
             res.append(TimeUnit(temp[i], self, contextTp))
+            # res[i].tp.tunit[3] = -1
             contextTp = res[i].tp
+            # print(self.nowTime.year)
+            # print(contextTp.tunit)
         res = self.__filterTimeUnit(res)
 
         return res

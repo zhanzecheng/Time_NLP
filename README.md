@@ -16,16 +16,32 @@ Java 版本https://github.com/shinyke/Time-NLP
     print(res)
     res = tn.parse(target=u'2个小时以前') # target为待分析语句，timeBase为基准时间默认是当前时间
     print(res)
-    res = tn.parse(target=u'2016年') # target为待分析语句，timeBase为基准时间默认是当前时间
+    res = tn.parse(target=u'晚上8点到上午10点之间') # target为待分析语句，timeBase为基准时间默认是当前时间
     print(res)
 返回结果：
 
     {"timedelta": "0 days, 0:10:00", "type": "timedelta"}
     {"timestamp": "2013-02-28 16:30:29", "type": "timestamp"}
-    {"timedelta": "33 days, 0:02:04", "type": "timedelta"}
+    {"type": "timedelta", "timedelta": {"year": 0, "month": 1, "day": 3, "hour": 0, "minute": 2, "second": 4}}
     {"timestamp": "2018-06-01 21:15:00", "type": "timestamp"}
     {"error": "no time pattern could be extracted."}
-    {"timestamp": "2016-01-01 00:00:00", "type": "timestamp"}
+    {"type": "timespan", "timespan": ["2018-03-16 20:00:00", "2018-03-16 10:00:00"]}
     
 ##使用方式 
 demo：python3 Test.py
+
+优化说明
+    
+| 问题          | 以前版本                                     | 现在版本                    |
+| ----------- | ---------------------------------------- | ---------------------- |
+| 无法解析下下周末     | "timestamp": "2018-04-01 00:00:00"                                    | "timestamp": "2018-04-08 00:00:00"                 |
+| 无法解析 3月4         | "2018-03-01"                                   | "2018-03-04"               |
+| 无法解析 初一 初二      | cannot parse                                    | "2018-02-16"              |
+| 晚上8点到上午10点之间  无法解析上午      | ["2018-03-16 20:00:00", "2018-03-16 22:00:00"] |  ["2018-03-16 20:00:00", "2018-03-16 10:00:00"]
+             |
+
+##TODO
+
+| 问题          | 现在版本                                     | 正确
+| ----------- | ---------------------------------------- | ---------------------- |
+| 晚上8点到上午10点之间     |  ["2018-03-16 20:00:00", "2018-03-16 22:00:00"] |  ["2018-03-16 20:00:00", "2018-03-17 10:00:00"]"                                    | "timestamp": "2018-04-08 00:00:00"                 |
