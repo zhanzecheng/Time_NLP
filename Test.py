@@ -4,9 +4,8 @@
 # @Author  : zhm
 # @File    : Test.py
 # @Software: PyCharm
-import sys
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
+# @Changed : tianyuningmou
+
 from TimeNormalizer import TimeNormalizer # 引入包
 
 tn = TimeNormalizer()
@@ -27,6 +26,9 @@ res = tn.parse(target=u'三日') # target为待分析语句，timeBase为基准�
 print(res)
 
 res = tn.parse(target=u'7点4') # target为待分析语句，timeBase为基准时间默认是当前时间
+print(res)
+
+res = tn.parse(target=u'今年春分')
 print(res)
 
 #
