@@ -4,12 +4,13 @@
 # @Author  : zhm
 # @File    : setup.py.py
 # @Software: PyCharm
+# @Changed : tianyuningmou
 
 from setuptools import setup
 
 setup(
     name="TimeConverter",
-    version="1.0.0",
+    version="1.1.0",
     keywords=("time", "nlp"),
     description="...",
     long_description="...",
@@ -26,6 +27,7 @@ setup(
     zip_safe=False,
     classifiers=[
             'Programming Language :: Python :: 2.6',
-            'Programming Language :: Python :: 2.7'
+            'Programming Language :: Python :: 2.7',
+            'Programming Language :: Python :: 3.6'
         ]
 )
