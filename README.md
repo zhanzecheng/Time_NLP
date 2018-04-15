@@ -42,7 +42,8 @@ demo：python3 Test.py
 
 感谢@[tianyuningmou](https://github.com/tianyuningmou) 目前增加了对24节气的支持
 
-    temp = ['今年春分']
+
+    temp = ['今年春分']
     "timestamp" : "2020-03-20 00:00:00"
 
 ## TODO
