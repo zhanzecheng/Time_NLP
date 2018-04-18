@@ -25,7 +25,7 @@ print(res)
 res = tn.parse(target=u'三日') # target为待分析语句，timeBase为基准时间默认是当前时间
 print(res)
 
-res = tn.parse(target=u'7点4') # target为待分析语句，timeBase为基准时间默认是当前时间
+res = tn.parse(target=u'今天下午两点') # target为待分析语句，timeBase为基准时间默认是当前时间
 print(res)
 
 res = tn.parse(target=u'今年春分')
