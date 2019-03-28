@@ -34,6 +34,12 @@ print(res)
 res = tn.parse(target=u'7000万')
 print(res)
 
+res = tn.parse(target=u'7百')
+print(res)
+
+res = tn.parse(target=u'7千')
+print(res)
+
 #
 #
 #
