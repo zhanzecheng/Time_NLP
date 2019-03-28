@@ -31,6 +31,9 @@ print(res)
 res = tn.parse(target=u'今年春分')
 print(res)
 
+res = tn.parse(target=u'7000万')
+print(res)
+
 #
 #
 #
