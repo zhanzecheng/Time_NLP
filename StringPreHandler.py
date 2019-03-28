@@ -131,7 +131,7 @@ class StringPreHandler:
         for m in match:
             group = m.group()
             s = group.split(u"万")
-            s = filter(None, s)
+            s = list(filter(None, s))
             num = 0
             if len(s) == 1:
                 tenthousand = int(s[0])
