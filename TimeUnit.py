@@ -38,7 +38,7 @@ class TimeUnit:
         self.norm_setmonth()
         self.norm_setday()
         self.norm_setmonth_fuzzyday()
-        self.norm_setBaseRelated()
+        # self.norm_setBaseRelated()
         self.norm_setCurRelated()
         self.norm_sethour()
         self.norm_setminute()
