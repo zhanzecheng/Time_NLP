@@ -208,7 +208,7 @@ class TimeUnit:
             self.tp.tunit[3] = int(match.group())
             # print('first', self.tp.tunit[3] )
             # 处理倾向于未来时间的情况
-            self.preferFuture(3)
+            # self.preferFuture(3)
             self.isAllDayTime = False
 
         # * 对关键字：早（包含早上/早晨/早间），上午，中午,午间,下午,午后,晚上,傍晚,晚间,晚,pm,PM的正确时间计算
@@ -228,7 +228,7 @@ class TimeUnit:
             elif self.tp.tunit[3] == 0:
                 self.tp.tunit[3] = 12
             # 处理倾向于未来时间的情况
-            self.preferFuture(3)
+            # self.preferFuture(3)
             self.isAllDayTime = False
 
         rule = u"早上|早晨|早间|晨间|今早|明早|早|清晨"
@@ -242,7 +242,7 @@ class TimeUnit:
                 self.tp.tunit[3] -= 12
             elif self.tp.tunit[3] == 0:
                 self.tp.tunit[3] = 12
-            self.preferFuture(3)
+            # self.preferFuture(3)
             self.isAllDayTime = False
 
         rule = u"上午"
@@ -256,7 +256,7 @@ class TimeUnit:
             elif self.tp.tunit[3] == 0:
                 self.tp.tunit[3] = 12
             # 处理倾向于未来时间的情况
-            self.preferFuture(3)
+            # self.preferFuture(3)
             self.isAllDayTime = False
 
         rule = u"(中午)|(午间)|白天"
@@ -268,7 +268,7 @@ class TimeUnit:
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“中午/午间”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.noon
             # 处理倾向于未来时间的情况
-            self.preferFuture(3)
+            # self.preferFuture(3)
             self.isAllDayTime = False
 
         rule = u"(下午)|(午后)|(pm)|(PM)"
@@ -280,7 +280,7 @@ class TimeUnit:
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“下午|午后”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.afternoon
             # 处理倾向于未来时间的情况
-            self.preferFuture(3)
+            # self.preferFuture(3)
             self.isAllDayTime = False
 
         rule = u"晚上|夜间|夜里|今晚|明晚|晚|夜里"
@@ -294,7 +294,7 @@ class TimeUnit:
             elif self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“下午|午后”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.lateNight
             # 处理倾向于未来时间的情况
-            self.preferFuture(3)
+            # self.preferFuture(3)
             self.isAllDayTime = False
 
     def norm_setminute(self):
