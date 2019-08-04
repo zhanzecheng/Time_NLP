@@ -196,21 +196,7 @@ class TimeUnit:
             self.preferFuture(2)
             self._check_time(self.tp.tunit)
 
-    def norm_sethour(self):
-        """
-        时-规范化方法：该方法识别时间表达式单元的时字段
-        :return:
-        """
-        rule = u"(?<!(周|星期))([0-2]?[0-9])(?=(点|时))"
-        pattern = re.compile(rule)
-        match = pattern.search(self.exp_time)
-        if match is not None:
-            self.tp.tunit[3] = int(match.group())
-            # print('first', self.tp.tunit[3] )
-            # 处理倾向于未来时间的情况
-            self.preferFuture(3)
-            self.isAllDayTime = False
-
+    def norm_checkKeyword(self):
         # * 对关键字：早（包含早上/早晨/早间），上午，中午,午间,下午,午后,晚上,傍晚,晚间,晚,pm,PM的正确时间计算
         # * 规约：
         # * 1.中午/午间0-10点视为12-22点
@@ -296,6 +282,24 @@ class TimeUnit:
             # 处理倾向于未来时间的情况
             self.preferFuture(3)
             self.isAllDayTime = False
+
+    def norm_sethour(self):
+        """
+        时-规范化方法：该方法识别时间表达式单元的时字段
+        :return:
+        """
+        rule = u"(?<!(周|星期))([0-2]?[0-9])(?=(点|时))"
+        pattern = re.compile(rule)
+        match = pattern.search(self.exp_time)
+        if match is not None:
+            self.tp.tunit[3] = int(match.group())
+            # print('first', self.tp.tunit[3] )
+            self.norm_checkKeyword()
+            # 处理倾向于未来时间的情况
+            self.preferFuture(3)
+            self.isAllDayTime = False
+        else:
+            self.norm_checkKeyword()
 
     def norm_setminute(self):
         """
