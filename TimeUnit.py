@@ -29,6 +29,7 @@ class TimeUnit:
         self.tp = TimePoint()
         self.tp_origin = contextTp
         self.isFirstTimeSolveContext = True
+        self.isMorning = False
         self.isAllDayTime = True
         self.time = arrow.now()
         self.time_normalization()
@@ -207,6 +208,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“凌晨”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.day_break
             elif 12 <= self.tp.tunit[3] <= 23:
@@ -221,6 +223,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“早上/早晨/早间”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.early_morning
                 # 处理倾向于未来时间的情况
@@ -235,6 +238,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“上午”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.morning
             elif 12 <= self.tp.tunit[3] <= 23:
@@ -249,6 +253,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if 0 <= self.tp.tunit[3] <= 10:
                 self.tp.tunit[3] += 12
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“中午/午间”这种情况的处理
@@ -1026,6 +1031,11 @@ class TimeUnit:
         for i in range(0, checkTimeIndex):
             if self.tp.tunit[i] == -1 and self.tp_origin.tunit[i] != -1:
                 self.tp.tunit[i] = self.tp_origin.tunit[i]
+        t_o = self.tp_origin.tunit[checkTimeIndex]
+        t = self.tp.tunit[checkTimeIndex]
+        if not self.isMorning and checkTimeIndex == 3 \
+                and t_o >= 12 and (t_o-12) < t < 12:
+            self.tp.tunit[checkTimeIndex] += 12
         self.isFirstTimeSolveContext = False
 
     def addTime(self, cur, fore_unit):
