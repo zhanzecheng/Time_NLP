@@ -29,6 +29,7 @@ class TimeUnit:
         self.tp = TimePoint()
         self.tp_origin = contextTp
         self.isFirstTimeSolveContext = True
+        self.isMorning = False
         self.isAllDayTime = True
         self.time = arrow.now()
         self.time_normalization()
@@ -196,21 +197,7 @@ class TimeUnit:
             self.preferFuture(2)
             self._check_time(self.tp.tunit)
 
-    def norm_sethour(self):
-        """
-        时-规范化方法：该方法识别时间表达式单元的时字段
-        :return:
-        """
-        rule = u"(?<!(周|星期))([0-2]?[0-9])(?=(点|时))"
-        pattern = re.compile(rule)
-        match = pattern.search(self.exp_time)
-        if match is not None:
-            self.tp.tunit[3] = int(match.group())
-            # print('first', self.tp.tunit[3] )
-            # 处理倾向于未来时间的情况
-            self.preferFuture(3)
-            self.isAllDayTime = False
-
+    def norm_checkKeyword(self):
         # * 对关键字：早（包含早上/早晨/早间），上午，中午,午间,下午,午后,晚上,傍晚,晚间,晚,pm,PM的正确时间计算
         # * 规约：
         # * 1.中午/午间0-10点视为12-22点
@@ -221,6 +208,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“凌晨”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.day_break
             elif 12 <= self.tp.tunit[3] <= 23:
@@ -235,6 +223,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“早上/早晨/早间”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.early_morning
                 # 处理倾向于未来时间的情况
@@ -249,6 +238,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“上午”这种情况的处理
                 self.tp.tunit[3] = RangeTimeEnum.morning
             elif 12 <= self.tp.tunit[3] <= 23:
@@ -263,6 +253,7 @@ class TimeUnit:
         pattern = re.compile(rule)
         match = pattern.search(self.exp_time)
         if match is not None:
+            self.isMorning = True
             if 0 <= self.tp.tunit[3] <= 10:
                 self.tp.tunit[3] += 12
             if self.tp.tunit[3] == -1:  # 增加对没有明确时间点，只写了“中午/午间”这种情况的处理
@@ -296,6 +287,24 @@ class TimeUnit:
             # 处理倾向于未来时间的情况
             self.preferFuture(3)
             self.isAllDayTime = False
+
+    def norm_sethour(self):
+        """
+        时-规范化方法：该方法识别时间表达式单元的时字段
+        :return:
+        """
+        rule = u"(?<!(周|星期))([0-2]?[0-9])(?=(点|时))"
+        pattern = re.compile(rule)
+        match = pattern.search(self.exp_time)
+        if match is not None:
+            self.tp.tunit[3] = int(match.group())
+            # print('first', self.tp.tunit[3] )
+            self.norm_checkKeyword()
+            # 处理倾向于未来时间的情况
+            self.preferFuture(3)
+            self.isAllDayTime = False
+        else:
+            self.norm_checkKeyword()
 
     def norm_setminute(self):
         """
@@ -965,9 +974,9 @@ class TimeUnit:
         # 2. 根据上下文补充时间
         self.checkContextTime(checkTimeIndex)
         # 3. 根据上下文补充时间后再次检查被检查的时间级别之前，是否没有更高级的已经确定的时间，如果有，则不进行倾向处理.
-        for i in range(0, checkTimeIndex):
-            if self.tp.tunit[i] != -1:
-                return
+        # for i in range(0, checkTimeIndex):
+        #     if self.tp.tunit[i] != -1:
+        #         return
 
         # 4. 确认用户选项
         if not self.normalizer.isPreferFuture:
@@ -1017,12 +1026,15 @@ class TimeUnit:
         :param checkTimeIndex:
         :return:
         """
+        if not self.isFirstTimeSolveContext:
+            return
         for i in range(0, checkTimeIndex):
             if self.tp.tunit[i] == -1 and self.tp_origin.tunit[i] != -1:
                 self.tp.tunit[i] = self.tp_origin.tunit[i]
-        # 在处理小时这个级别时，如果上文时间是下午的且下文没有主动声明小时级别以上的时间，则也把下文时间设为下午
-        if self.isFirstTimeSolveContext is True and checkTimeIndex == 3 and self.tp_origin.tunit[
-            checkTimeIndex] >= 12 and self.tp.tunit[checkTimeIndex] < 12:
+        t_o = self.tp_origin.tunit[checkTimeIndex]
+        t = self.tp.tunit[checkTimeIndex]
+        if not self.isMorning and checkTimeIndex == 3 \
+                and t_o >= 12 and (t_o-12) < t < 12:
             self.tp.tunit[checkTimeIndex] += 12
         self.isFirstTimeSolveContext = False
 
