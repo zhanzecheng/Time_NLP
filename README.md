@@ -2,6 +2,7 @@
 Time-NLP的python3版本   
 python 版本https://github.com/sunfiyes/Time-NLPY  
 Java 版本https://github.com/shinyke/Time-NLP
+PHP 版本https://github.com/crazywhalecc/Time-NLP-PHP
 ## 功能说明
 用于句子中时间词的抽取和转换  
 详情请见test.py
