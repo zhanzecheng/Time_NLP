@@ -858,7 +858,7 @@ class TimeUnit:
             rule = u"上"
             pattern = re.compile(rule)
             match = pattern.findall(self.exp_time)
-            cur = cur.replace(weeks=-len(match), days=span)
+            cur = cur.shift(weeks=-len(match), days=span)
 
         rule = u"(?<=((?<!上)上(周|星期)))[1-7]?"
         pattern = re.compile(rule)
@@ -871,7 +871,7 @@ class TimeUnit:
                 week = 1
             week -= 1
             span = week - cur.weekday()
-            cur = cur.replace(weeks=-1, days=span)
+            cur = cur.shift(weeks=-1, days=span)
 
         rule = u"(?<=((?<!下)下(周|星期)))[1-7]?"
         pattern = re.compile(rule)
