@@ -165,7 +165,7 @@ class TimeNormalizer:
             # 这里是一个类嵌套了一个类
             res.append(TimeUnit(temp[i], self, contextTp))
             # res[i].tp.tunit[3] = -1
-            contextTp = res[i].tp.copy()
+            contextTp = res[i].tp
             # print(self.nowTime.year)
             # print(contextTp.tunit)
         res = self.__filterTimeUnit(res)
