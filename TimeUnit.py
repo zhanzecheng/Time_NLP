@@ -9,7 +9,6 @@
 
 import regex as re
 import arrow
-import copy
 from TimePoint import TimePoint
 from RangeTimeEnum import RangeTimeEnum
 
@@ -27,7 +26,7 @@ class TimeUnit:
         # print(exp_time)
         self.normalizer = normalizer
         self.tp = TimePoint()
-        self.tp_origin = contextTp
+        self.tp_origin = contextTp.copy()
         self.isFirstTimeSolveContext = True
         self.isMorning = False
         self.isAllDayTime = True
@@ -48,7 +47,6 @@ class TimeUnit:
         self.norm_setSpanRelated()
         self.norm_setHoliday()
         self.modifyTimeBase()
-        self.tp_origin.tunit = copy.deepcopy(self.tp.tunit)
 
         # 判断是时间点还是时间区间
         flag = True
