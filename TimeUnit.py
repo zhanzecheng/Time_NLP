@@ -720,7 +720,7 @@ class TimeUnit:
         :return:
         """
         # 这一块还是用了断言表达式
-        cur = arrow.get(self.normalizer.timeBase, "YYYY-M-D-H-m-s")
+        cur = arrow.get(self.normalizer.oldTimeBase, "YYYY-M-D-H-m-s")
         flag = [False, False, False]
 
         rule = u"前年"
