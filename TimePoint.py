@@ -13,3 +13,8 @@
 class TimePoint:
     def __init__(self):
         self.tunit = [-1, -1, -1, -1, -1, -1]
+
+    def copy(self):
+        new_instance = TimePoint()
+        new_instance.tunit = self.tunit.copy()
+        return new_instance
