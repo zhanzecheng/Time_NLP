@@ -858,7 +858,7 @@ class TimeUnit:
             rule = u"上"
             pattern = re.compile(rule)
             match = pattern.findall(self.exp_time)
-            cur = cur.replace(weeks=-len(match), days=span)
+            cur = cur.shift(weeks=-len(match), days=span)
 
         rule = u"(?<=((?<!上)上(周|星期)))[1-7]?"
         pattern = re.compile(rule)
@@ -871,7 +871,7 @@ class TimeUnit:
                 week = 1
             week -= 1
             span = week - cur.weekday()
-            cur = cur.replace(weeks=-1, days=span)
+            cur = cur.shift(weeks=-1, days=span)
 
         rule = u"(?<=((?<!下)下(周|星期)))[1-7]?"
         pattern = re.compile(rule)
@@ -884,7 +884,7 @@ class TimeUnit:
                 week = 1
             week -= 1
             span = week - cur.weekday()
-            cur = cur.replace(weeks=1, days=span)
+            cur = cur.shift(weeks=1, days=span)
 
         # 这里对下下下周的时间转换做出了改善
         rule = u"(?<=(下*下下(周|星期)))[1-7]?"
@@ -901,7 +901,7 @@ class TimeUnit:
             rule = u"下"
             pattern = re.compile(rule)
             match = pattern.findall(self.exp_time)
-            cur = cur.replace(weeks=len(match), days=span)
+            cur = cur.shift(weeks=len(match), days=span)
 
         rule = u"(?<=((?<!(上|下|个|[0-9]))(周|星期)))[1-7]"
         pattern = re.compile(rule)
@@ -914,7 +914,7 @@ class TimeUnit:
                 week = 1
             week -= 1
             span = week - cur.weekday()
-            cur = cur.replace(days=span)
+            cur = cur.shift(days=span)
             # 处理未来时间
             cur = self.preferFutureWeek(week, cur)
 
